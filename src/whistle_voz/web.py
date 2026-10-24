@@ -16,7 +16,10 @@ from typing import Literal
 # Whistle no debe enviar estadísticas de uso por defecto desde esta app local.
 os.environ.setdefault("NEEDLE_TELEMETRY", "0")
 ROOT = Path(__file__).resolve().parents[2]
-MODELS = Path(os.environ.get("WHISTLE_MODELS_DIR", ROOT / "models"))
+SOURCE_CHECKOUT = (ROOT / "pyproject.toml").is_file() and (ROOT / "src" / "whistle_voz").is_dir()
+CACHE_ROOT = Path(os.environ.get("XDG_CACHE_HOME") or Path.home() / ".cache").expanduser()
+DEFAULT_MODELS = ROOT / "models" if SOURCE_CHECKOUT else CACHE_ROOT / "english-studio" / "models"
+MODELS = Path(os.environ.get("WHISTLE_MODELS_DIR", DEFAULT_MODELS)).expanduser()
 MODEL = MODELS / "kokoro-v1.0.int8.onnx"
 VOICES = MODELS / "voices-v1.0.bin"
 WHISTLE = MODELS / "whistle.cact"
